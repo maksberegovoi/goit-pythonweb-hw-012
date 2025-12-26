@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: goit_hw10_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-goit-pythonweb-hw-08}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-567234}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  web:
+    build:
+      context: .
+    container_name: goit_hw10_web
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      # IMPORTANT: inside Docker, reach Postgres by service name "db"
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+
+      # Provide fully expanded URLs so your app doesn't depend on ${...} expansion in .env
+      DB_URL: postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/${POSTGRES_DB}
+      SYNC_DB_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/${POSTGRES_DB}
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    # If you want live reload during development:
+    # command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+volumes:
+  postgres_data:
