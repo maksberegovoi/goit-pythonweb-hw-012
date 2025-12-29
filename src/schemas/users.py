@@ -1,11 +1,14 @@
 from pydantic import BaseModel, EmailStr, ConfigDict
 
+from src.database.models import UserRole
+
 
 class UserBase(BaseModel):
     id: int
     username: str
     email: EmailStr
     avatar_url: str
+    role: UserRole
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -14,6 +17,7 @@ class UserCreate(BaseModel):
     username: str
     email: EmailStr
     password: str
+    role: UserRole
 
 
 class Token(BaseModel):
@@ -35,3 +39,8 @@ class Token(BaseModel):
 
 class RequestEmail(BaseModel):
     email: EmailStr
+
+class UserForgotPassword(BaseModel):
+    user_data: str | EmailStr
+    old_password: str
+    new_password: str

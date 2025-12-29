@@ -28,6 +28,9 @@ class Settings(BaseSettings):
     CLOUDINARY_API_KEY: int
     CLOUDINARY_API_SECRET: str
 
+    REDIS_HOST: str
+    REDIS_PORT: str
+
 
     TEMPLATE_FOLDER: ClassVar[Path] = Path(__file__).parent / 'templates'
 

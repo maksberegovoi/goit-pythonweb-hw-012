@@ -1,10 +1,10 @@
 services:
   db:
     image: postgres:16-alpine
-    container_name: goit_hw10_db
+    container_name: goit_hw12_db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-goit-pythonweb-hw-08}
+      POSTGRES_DB: ${POSTGRES_DB:-goit-pythonweb-hw-12}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-567234}
     volumes:
@@ -12,10 +12,24 @@ services:
     ports:
       - "5432:5432"
 
+  redis:
+    image: redis:alpine
+    container_name: redis_cache
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   web:
     build:
       context: .
-    container_name: goit_hw10_web
+    container_name: goit_hw12_web
     restart: unless-stopped
     env_file:
       - .env
@@ -29,6 +43,7 @@ services:
       SYNC_DB_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:${POSTGRES_PORT}/${POSTGRES_DB}
     depends_on:
       - db
+      - redis
     ports:
       - "8000:8000"
     # If you want live reload during development:
@@ -36,3 +51,4 @@ services:
 
 volumes:
   postgres_data:
+  redis_data:

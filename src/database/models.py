@@ -1,3 +1,6 @@
+import enum
+
+from pydantic import EmailStr
 from sqlalchemy import String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, DeclarativeBase, relationship
 from datetime import date
@@ -26,14 +29,21 @@ class Contact(Base):
     user: Mapped['User'] = relationship(back_populates='contacts')
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id', ondelete='CASCADE'))
 
+class UserRole(enum.Enum):
+    ADMIN = "admin"
+    USER = "user"
+
 class User(Base):
     __tablename__ = 'users'
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    role: Mapped['UserRole'] = mapped_column(default=UserRole.USER)
     username : Mapped[str] = mapped_column(nullable=False)
     email: Mapped[str] = mapped_column(nullable=False, unique=True)
     password: Mapped[str] = mapped_column(nullable=False)
+    temp_password: Mapped[str] = mapped_column(nullable=True)
     avatar_url: Mapped[str | None] = mapped_column(nullable=True)
     is_verified: Mapped[bool] = mapped_column(default=False)
 
     contacts:Mapped[list['Contact']] = relationship(back_populates="user")
+

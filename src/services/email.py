@@ -21,7 +21,15 @@ conf = ConnectionConfig(
     TEMPLATE_FOLDER=Path(__file__).parent / "templates",
 )
 
-async def send_email(email: EmailStr, username: str, host: str):
+async def send_email_for_confirm(email: EmailStr, username: str, host: str):
+    """
+       Send an email to the user with a verification link for confirming their email address.
+
+       Args:
+           email (EmailStr): Recipient's email address.
+           username (str): Username of the recipient.
+           host (str): Host URL to generate verification link.
+       """
     try:
         token_verification = create_email_token({"sub": email})
         message = MessageSchema(
@@ -37,5 +45,32 @@ async def send_email(email: EmailStr, username: str, host: str):
 
         fm = FastMail(conf)
         await fm.send_message(message, template_name="verify_email.html")
+    except ConnectionErrors as err:
+        print(err)
+
+async def send_email_for_reset_password(email: EmailStr, username: str, host: str):
+    """
+       Send an email to the user with a token link to reset their password.
+
+       Args:
+           email (EmailStr): Recipient's email address.
+           username (str): Username of the recipient.
+           host (str): Host URL to generate password reset link.
+       """
+    try:
+        token_verification = create_email_token({"sub": email})
+        message = MessageSchema(
+            subject="Password Reset Request",
+            recipients=[email],
+            template_body={
+                "host": host,
+                "username": username,
+                "token": token_verification,
+            },
+            subtype=MessageType.html,
+        )
+
+        fm = FastMail(conf)
+        await fm.send_message(message, template_name="reset_password.html")
     except ConnectionErrors as err:
         print(err)
