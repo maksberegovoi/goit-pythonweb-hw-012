@@ -1,14 +1,60 @@
-# goit-pythonweb-hw-10
+# goit-pythonweb-hw-012  
+GoIT Neoversity · Homework 12 · FullStack Web Development with Python
 
-FastAPI service.
+## 📌 Contacts REST API
 
-poetry lock  
-docker compose up --build
+Проєкт реалізує REST API для роботи з контактами на базі **FastAPI**.  
+Застосунок повністю ізольований у **Docker**, використовує **PostgreSQL** для зберігання даних та **Redis** для кешування.
+
+---
+
+## ⚙️ Стек технологій
+
+- Python 3.12  
+- FastAPI  
+- PostgreSQL (asyncpg)  
+- Redis  
+- SQLAlchemy + Alembic  
+- UV  
+- Docker / Docker Compose  
+
+---
+
+## 📂 Архітектура
+
+- API — FastAPI
+- Асинхронна робота з БД
+- Міграції через Alembic
+- Кешування запитів у Redis
+- Тести запускаються у контейнері
+
+---
+
+## ▶️ Запуск проєкту
+
+### 1. Підготовка змінних середовища
+
+Створіть файл `.env.docker` або `.env` з необхідними змінними.  
+Docker Compose використовує їх автоматично.
+
+### 2. Збірка та старт контейнерів
+
+```bash
+docker compose up -d --build
+```
+
+### 3. Міграції бази даних
+
+```bash
 docker compose exec web alembic upgrade head
+```
+Після цього API буде доступне за адресою:
+http://localhost:8000
 
+Swagger-документація:
+http://localhost:8000/docs
 
-docker compose build --no-cache 
-docker compose up
-docker compose up --build
+### 🧾 Приклад .env файлу
 
-## Run (Docker)
+<img width="937" height="560" alt="image" src="https://github.com/user-attachments/assets/3a368cdf-a351-4100-bf6b-174eee3084ae" />
+
